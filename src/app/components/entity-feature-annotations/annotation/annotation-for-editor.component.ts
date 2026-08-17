@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -34,7 +34,7 @@ import { AnnotationComponent } from './annotation.component';
     MenuOptionComponent,
   ],
 })
-export class AnnotationComponentForEditorComponent extends AnnotationComponent {
+export class AnnotationComponentForEditorComponent extends AnnotationComponent implements OnInit {
   public async toggleVisibility() {
     const [{ _id }, showAnnotation, isSelectedAnnotation, isAnnotationHidden] = await Promise.all([
       firstValueFrom(this.annotation$),
@@ -98,8 +98,7 @@ export class AnnotationComponentForEditorComponent extends AnnotationComponent {
     this.showAnnotation$.next(true);
   }
 
-  public handleEditModeChange() {
-    // empty handler to overwrite parent handler
-    // otherwise we would send multiple write requests per annotation
+  override ngOnInit() {
+    // Do nothing
   }
 }

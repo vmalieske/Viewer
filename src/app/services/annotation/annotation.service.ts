@@ -71,6 +71,7 @@ export class AnnotationService {
   // All about annotations
   public selectedAnnotation$ = new BehaviorSubject('');
   public editModeAnnotation$ = new BehaviorSubject('');
+  public toggleFullscreenAnnotation$ = new BehaviorSubject('');
   public annotations$ = new BehaviorSubject<IAnnotation[]>([]);
   public hiddenAnnotations$ = new BehaviorSubject<string[]>([]);
 
@@ -421,8 +422,6 @@ export class AnnotationService {
       }
       this.picked$.next(pickResult);
     });
-
-    this.setAnnotationMode(false);
   }
 
   private async setAnnotationMode(value: boolean) {
@@ -520,6 +519,7 @@ export class AnnotationService {
     );
     console.log('transformedAnnotation', transformedAnnotation);
 
+    this.toggleFullscreenAnnotation$.next(transformedAnnotation._id.toString());
     this.add(transformedAnnotation);
   }
 

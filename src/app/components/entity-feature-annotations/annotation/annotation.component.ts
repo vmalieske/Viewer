@@ -1,4 +1,13 @@
-import { Component, ElementRef, HostBinding, Input, computed, inject, output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostBinding,
+  Input,
+  OnInit,
+  computed,
+  inject,
+  output,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Matrix, Vector3 } from '@babylonjs/core';
 import { BehaviorSubject, ReplaySubject, combineLatest, firstValueFrom, interval, map } from 'rxjs';
@@ -18,6 +27,8 @@ import { ExtenderSlotDirective } from '../../../directives/extender-slot.directi
 import DeepClone from 'rfdc';
 import deepEqual from 'fast-deep-equal';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs';
+import { first } from 'rxjs';
 const deepClone = DeepClone({ circles: true });
 
 export type ReorderMovement = 'one-up' | 'one-down' | 'first' | 'last';
@@ -38,7 +49,7 @@ export type ReorderMovement = 'one-up' | 'one-down' | 'first' | 'last';
     ExtenderSlotDirective,
   ],
 })
-export class AnnotationComponent {
+export class AnnotationComponent implements OnInit {
   public annotationService = inject(AnnotationService);
   public babylon = inject(BabylonService);
   public dialog = inject(MatDialog);
@@ -91,7 +102,9 @@ export class AnnotationComponent {
   ]).pipe(
     map(([isAnnotatingAllowed, isAnnotationOwner]) => isAnnotatingAllowed && isAnnotationOwner),
   );
-  public canUserReorder$ = this.processing.isOwner$.pipe(map(isOwner => isOwner.ofCompilation));
+  public canUserReorder$ = this.processing.isOwner$.pipe(
+    map(isOwner => isOwner.ofCompilation || isOwner.ofEntity),
+  );
 
   public isSelectedAnnotation$ = combineLatest([
     this.annotation$,
@@ -131,9 +144,6 @@ export class AnnotationComponent {
   }
 
   constructor() {
-    combineLatest([interval(15), this.annotation$])
-      .pipe(map(([_, annotation]) => annotation))
-      .subscribe(annotation => this.setPosition(annotation));
     this.isSelectedAnnotation$.subscribe(isSelected => {
       this.#isSelected = isSelected;
     });
@@ -182,11 +192,14 @@ export class AnnotationComponent {
 
   public async toggleFullscreen(mode: 'edit' | 'preview') {
     const annotation = await firstValueFrom(this.annotation$);
+    const existingDialog = this.dialog.getDialogById('fullscreen-editor');
+    if (existingDialog) return;
     const dialogRef = this.dialog.open<
       DialogAnnotationEditorComponent,
       any,
       IAnnotation | undefined
     >(DialogAnnotationEditorComponent, {
+      id: 'fullscreen-editor',
       width: 'min(75vw, 860px)',
       maxHeight: '80vh',
       data: { annotation: deepClone(annotation), mode },
@@ -198,6 +211,29 @@ export class AnnotationComponent {
     if (!result) return;
     if (deepEqual(annotation, result)) return;
 
-    this.annotationService.updateAnnotation(result);
+    return this.annotationService.updateAnnotation(result);
+  }
+
+  ngOnInit() {
+    combineLatest([interval(15), this.annotation$])
+      .pipe(map(([_, annotation]) => annotation))
+      .subscribe(annotation => this.setPosition(annotation));
+
+    combineLatest([
+      this.annotation$,
+      this.annotationService.selectedAnnotation$,
+      this.annotationService.toggleFullscreenAnnotation$,
+    ])
+      .pipe(
+        filter(
+          ([annotation, selected, toggle]) => annotation._id === selected && selected === toggle,
+        ),
+        first(),
+      )
+      .subscribe(() => {
+        return this.toggleFullscreen('edit').then(() => {
+          this.annotationService.toggleFullscreenAnnotation$.next('');
+        });
+      });
   }
 }
