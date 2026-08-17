@@ -10,6 +10,8 @@
   }
 
   .entity-card {
+    position: relative;
+
     background-color: rgba(255, 255, 255, 0.04);
     border-radius: 4px;
     border: solid 2px rgba(255, 255, 255, 0.04);
@@ -17,16 +19,6 @@
     cursor: pointer;
 
     transition: border 120ms ease-out;
-
-    &:hover,
-    &:focus,
-    &:focus-within {
-      border: solid 2px var(--color-gray-4);
-    }
-
-    &.selected {
-      border: solid 2px var(--color-primary);
-    }
 
     width: 100%;
     img {
@@ -44,5 +36,33 @@
       padding: 8px 2px;
       box-sizing: border-box;
     }
+
+    div.reorder-actions {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      top: 0px;
+      right: 0px;
+      background-color: rgba(0, 0, 0, 0.4);
+      border-radius: 8px;
+      margin: 8px;
+      box-sizing: border-box;
+      padding: 4px;
+    }
+
+    &:hover,
+    &:focus,
+    &:focus-within {
+      border: solid 2px var(--color-gray-4);
+    }
+
+    &.selected {
+      border: solid 2px var(--color-primary);
+    }
   }
+}
+
+k-button:has(mat-icon):has(span) mat-icon {
+  margin-right: 4px;
 }

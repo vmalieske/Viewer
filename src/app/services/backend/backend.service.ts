@@ -187,6 +187,16 @@ export class BackendService {
     }).then(response => (isAnnotation(response) ? response : undefined));
   }
 
+  public async updateCompilation(
+    compilation: RequestBody<Endpoint<'post', '/server/api/v1/post/push/{collection}'>>,
+  ) {
+    return this.createPost('/server/api/v1/post/push/{collection}', {
+      pathParams: { collection: Collection.compilation },
+      queryParams: {},
+      body: compilation,
+    }).then(response => (isCompilation(response) ? response : undefined));
+  }
+
   public generateVideoPreview(identifier: string, screenshots: string[]) {
     return this.createPost('/server/utility/generate-entity-video-preview', {
       pathParams: {},

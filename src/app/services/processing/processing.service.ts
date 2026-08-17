@@ -287,10 +287,6 @@ export class ProcessingService {
     this.babylon.resize();
   }
 
-  public updateActiveCompilation(compilation: ICompilation | undefined) {
-    this.compilation$.next(compilation);
-  }
-
   public async bootstrap() {
     const queryParams = new URLSearchParams(location.search);
     const entries = Object.fromEntries(queryParams.entries()) as IQueryParams;
@@ -562,7 +558,7 @@ export class ProcessingService {
           }
         }
 
-        this.updateActiveCompilation(compilation as ICompilation);
+        this.compilation$.next(compilation as ICompilation);
         return this.fetchEntityDataAfterCollection(compilation, specifiedEntity);
       })
       .catch(error => {

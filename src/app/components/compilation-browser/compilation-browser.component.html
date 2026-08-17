@@ -3,8 +3,35 @@
 @if (compilation$ | async; as compilation) {
   @if (entities$ | async; as entities) {
     <h2>{{ compilation.name }}</h2>
+
+    @if (isCompilationOwner()) {
+      @if (isReorderEnabled()) {
+        <k-button-row>
+          <k-button rounded (click)="cancelReorder()" type="outlined-accent" full-width>
+            <mat-icon>close</mat-icon>
+            <span>{{ 'Cancel' | translate }}</span>
+          </k-button>
+          <k-button rounded (click)="saveReorder()" type="solid-primary" full-width>
+            <mat-icon>save</mat-icon>
+            <span>{{ 'Save' | translate }}</span>
+          </k-button>
+        </k-button-row>
+      } @else {
+        <k-button rounded (click)="enableReorder()" type="solid-primary">
+          <mat-icon>reorder</mat-icon>
+          <span>{{ 'Change order' | translate }}</span>
+        </k-button>
+      }
+    }
+
     @if (entity$ | async; as selectedEntity) {
-      @for (entity of entities; track entity) {
+      @for (
+        entity of entities;
+        track entity;
+        let i = $index;
+        let first = $first;
+        let last = $last
+      ) {
         <div
           class="entity-card"
           [class.selected]="entity._id === selectedEntity._id"
@@ -15,6 +42,46 @@
             [style.--bg]="colorToRGBA(entity.settings.background.color)"
           />
           <span>{{ entity.name }}</span>
+
+          @if (isReorderEnabled()) {
+            <div class="reorder-actions">
+              <k-button
+                icon-button
+                [tooltip]="'Move to top' | translate"
+                (click)="applyReorderAction($event, 'move_top', i)"
+                [disabled]="first"
+              >
+                <mat-icon>keyboard_double_arrow_up</mat-icon>
+              </k-button>
+
+              <k-button
+                icon-button
+                [tooltip]="'Move one up' | translate"
+                (click)="applyReorderAction($event, 'move_up', i)"
+                [disabled]="first"
+              >
+                <mat-icon>keyboard_arrow_up</mat-icon>
+              </k-button>
+
+              <k-button
+                icon-button
+                [tooltip]="'Move one down' | translate"
+                (click)="applyReorderAction($event, 'move_down', i)"
+                [disabled]="last"
+              >
+                <mat-icon>keyboard_arrow_down</mat-icon>
+              </k-button>
+
+              <k-button
+                icon-button
+                [tooltip]="'Move to bottom' | translate"
+                (click)="applyReorderAction($event, 'move_bottom', i)"
+                [disabled]="last"
+              >
+                <mat-icon>keyboard_double_arrow_down</mat-icon>
+              </k-button>
+            </div>
+          }
         </div>
       }
     }
