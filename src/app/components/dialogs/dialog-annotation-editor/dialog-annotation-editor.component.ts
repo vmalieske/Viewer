@@ -26,7 +26,8 @@ import { MarkdownPreviewComponent } from '../../markdown-preview/markdown-previe
 import { ProcessingService } from 'src/app/services/processing/processing.service';
 import { UserdataService } from 'src/app/services/userdata/userdata.service';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
-import { ExtenderSlotDirective, ExtenderSlotEvent } from '@kompakkt/plugins/extender';
+import { ExtenderSlotEvent } from '@kompakkt/plugins/extender';
+import { ExtenderSlotDirective } from '../../../directives/extender-slot.directive';
 import { BehaviorSubject, map } from 'rxjs';
 
 export interface IDialogData {

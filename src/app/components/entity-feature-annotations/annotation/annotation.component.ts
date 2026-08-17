@@ -14,7 +14,7 @@ import { ButtonComponent, ButtonRowComponent, TooltipDirective } from '@kompakkt
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 import { DialogAnnotationEditorComponent } from '../../dialogs/dialog-annotation-editor/dialog-annotation-editor.component';
 import { MarkdownPreviewComponent } from '../../markdown-preview/markdown-preview.component';
-import { ExtenderSlotDirective } from '@kompakkt/plugins/extender';
+import { ExtenderSlotDirective } from '../../../directives/extender-slot.directive';
 import DeepClone from 'rfdc';
 import deepEqual from 'fast-deep-equal';
 import { toSignal } from '@angular/core/rxjs-interop';
