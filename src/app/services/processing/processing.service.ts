@@ -33,6 +33,7 @@ import { BackendService } from '../backend/backend.service';
 import { MessageService } from '../message/message.service';
 import { OverlayService } from '../overlay/overlay.service';
 import { UserdataService } from '../userdata/userdata.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 export type QualitySetting = 'low' | 'medium' | 'high' | 'raw';
 const isQualitySetting = (setting: any): setting is QualitySetting => {
@@ -92,6 +93,7 @@ export class ProcessingService {
   public meshes$ = new BehaviorSubject<AbstractMesh[]>([]);
   public compilation$ = new BehaviorSubject<ICompilation | undefined>(undefined);
   public mode$ = new BehaviorSubject<Mode>('');
+  public mode = toSignal(this.mode$);
   public settings$ = new BehaviorSubject({
     localSettings: minimalSettings,
     serverSettings: minimalSettings,

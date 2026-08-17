@@ -2,6 +2,7 @@ import { Component, computed, ElementRef, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { OverlayService } from '../../services/overlay/overlay.service';
 import { SequenceEditorComponent } from '../entity-feature-animations/sequence-editor/sequence-editor.component';
+import { ProcessingService } from 'src/app/services/processing/processing.service';
 
 @Component({
   selector: 'app-bottom-sheet',
@@ -14,14 +15,24 @@ import { SequenceEditorComponent } from '../entity-feature-animations/sequence-e
 })
 export class BottomSheetComponent {
   #overlay = inject(OverlayService);
+  #processing = inject(ProcessingService);
   #sidenav = toSignal(this.#overlay.sidenav$);
 
   isOpen = computed(() => {
     const state = this.#sidenav();
-    return state?.mode === 'animations' && !!state?.open;
+    if (!state?.open) return false;
+    switch (state.mode) {
+      case 'animations': {
+        // Only enable animation sequence editor when processing mode is 'annotation'
+        return this.#processing.mode() === 'annotation';
+      }
+      default: {
+        return false;
+      }
+    }
   });
 
   nativeElement = inject<ElementRef<HTMLDivElement>>(ElementRef).nativeElement;
 
-  mode = computed(() => (this.#sidenav()?.mode === 'animations' ? 'animations' : ''));
+  sidenavMode = computed(() => (this.#sidenav()?.mode === 'animations' ? 'animations' : ''));
 }

@@ -11,6 +11,9 @@ import { AnimationService, AnimTarget } from '../../services/animation/animation
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { AnimationGroupControlsComponent } from './animation-group-controls/animation-group-controls.component';
 import { SequenceEditorService } from 'src/app/services/sequence-editor.service';
+import { ProcessingService } from 'src/app/services/processing/processing.service';
+import { map } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-entity-feature-animations',
@@ -28,7 +31,10 @@ import { SequenceEditorService } from 'src/app/services/sequence-editor.service'
 })
 export class EntityFeatureAnimationsComponent implements OnDestroy {
   #sequenceEditorService = inject(SequenceEditorService);
+  processing = inject(ProcessingService);
   anim = inject(AnimationService);
+
+  isAnnotationMode = computed(() => this.processing.mode() === 'annotation');
 
   readonly tree = this.anim.tree$;
   readonly activeGroup = this.anim.activeGroup$;

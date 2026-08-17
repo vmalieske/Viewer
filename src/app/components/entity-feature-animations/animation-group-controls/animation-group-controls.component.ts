@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { AnimationGroup } from '@babylonjs/core';
-import { ButtonComponent } from '@kompakkt/komponents';
+import { ButtonComponent, TooltipDirective } from '@kompakkt/komponents';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
@@ -9,11 +9,12 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
   standalone: true,
   templateUrl: './animation-group-controls.component.html',
   styleUrls: ['./animation-group-controls.component.scss'],
-  imports: [MatIcon, ButtonComponent, TranslatePipe],
+  imports: [MatIcon, ButtonComponent, TranslatePipe, TooltipDirective],
 })
 export class AnimationGroupControlsComponent {
   readonly target = input.required<AnimationGroup>();
   readonly isActive = input<boolean>(false);
+  readonly isAnnotationMode = input<boolean>(false);
 
   readonly play = output<AnimationGroup>();
   readonly stop = output<void>();

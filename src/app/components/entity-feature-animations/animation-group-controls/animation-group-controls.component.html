@@ -10,7 +10,20 @@
   </k-button>
 }
 
-<k-button type="solid-primary" (click)="addToSequenceEditor.emit(target())">
-  <mat-icon>playlist_add</mat-icon>
-  <span>{{ 'Add to sequence editor' | translate }}</span>
-</k-button>
+<div
+  class="tooltip-wrapper"
+  [tooltip]="
+    (isAnnotationMode() ? '' : 'Animation sequences can only be edited in annotation mode')
+      | translate
+  "
+  tooltipPosition="right"
+>
+  <k-button
+    type="solid-primary"
+    (click)="addToSequenceEditor.emit(target())"
+    [disabled]="!isAnnotationMode()"
+  >
+    <mat-icon>playlist_add</mat-icon>
+    <span>{{ 'Add to sequence editor' | translate }}</span>
+  </k-button>
+</div>

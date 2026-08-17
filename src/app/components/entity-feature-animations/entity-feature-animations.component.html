@@ -29,6 +29,7 @@
       </div>
       <div class="group-controls">
         <app-animation-group-controls
+          [isAnnotationMode]="isAnnotationMode()"
           [target]="node.group"
           [isActive]="activeGroup() === node.group"
           (play)="play($event)"

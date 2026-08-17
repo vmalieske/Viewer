@@ -64,8 +64,12 @@ export class SceneComponent implements AfterViewInit {
 
   #overlay = inject(OverlayService);
   #sidenav = toSignal(this.#overlay.sidenav$);
+  // TODO: Move this decision to a BottomSheetService for centralized decisions
   #isSequenceEditorVisible = computed(
-    () => this.#sidenav()?.mode === 'animations' && this.#sidenav()?.open,
+    () =>
+      this.#sidenav()?.mode === 'animations' &&
+      this.#sidenav()?.open &&
+      this.processing.mode() === 'annotation',
   );
 
   bottomSheetEl = viewChild<BottomSheetComponent>('bottomSheet');
