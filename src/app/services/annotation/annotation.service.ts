@@ -319,8 +319,8 @@ export class AnnotationService {
     gizmo.dispose();
     utilLayer.dispose();
     const newWorldPosition = transformMesh.getAbsolutePosition().clone();
-    transformMesh.dispose();
     marker.setParent(null);
+    transformMesh.dispose();
 
     const center = this.babylon.getScene().getMeshesByTags('center')[0];
     if (result === 'apply' && center) {
@@ -348,7 +348,14 @@ export class AnnotationService {
     }
 
     const screenshot = await this.babylon.createPreviewScreenshot();
-    annotation.body.content.relatedPerspective.preview = screenshot;
+    if (result === 'apply') {
+      annotation.body.content.relatedPerspective = {
+        ...this.babylon.cameraManager.getInitialPosition(),
+        preview: screenshot,
+      };
+    } else {
+      annotation.body.content.relatedPerspective.preview = screenshot;
+    }
 
     if (result === 'apply') {
       await this.updateAnnotation(annotation);
